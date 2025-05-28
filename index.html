@@ -1,0 +1,407 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memeaquí - Crea y comparte tus memes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #93c5fd 0%, #fda4af 100%);
+        }
+        .team-selected {
+            box-shadow: 0 0 15px 5px rgba(255, 255, 255, 0.7);
+        }
+        .meme-card:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+        .rating-stars {
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <header class="bg-white bg-opacity-20 backdrop-blur-md py-4 px-6 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-laugh-squint text-3xl text-blue-600"></i>
+                <h1 class="text-2xl font-bold text-white">Memeaquí</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-xs text-white">Creator: Santiago Díaz</div>
+                <button onclick="window.location.href='https://wa.me/584126363859'" class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded-full flex items-center space-x-1 transition">
+                    <i class="fab fa-paypal"></i>
+                    <span>Donar</span>
+                </button>
+                <button onclick="window.location.href='https://chat.whatsapp.com/IwfL6aGPEMu4WI8cYJmEub'" class="bg-red-400 hover:bg-red-500 text-white px-4 py-2 rounded-full flex items-center space-x-1 transition">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Dar ideas</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto py-8 px-4">
+        <!-- Team Selection -->
+        <div class="flex justify-center mb-8">
+            <div class="bg-white bg-opacity-30 p-2 rounded-full flex">
+                <button id="madrid-btn" class="px-6 py-2 rounded-full font-bold text-white team-selected">
+                    <div class="flex items-center space-x-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png" alt="Real Madrid" class="w-8 h-8">
+                        <span>Real Madrid</span>
+                    </div>
+                </button>
+                <button id="barca-btn" class="px-6 py-2 rounded-full font-bold text-white">
+                    <div class="flex items-center space-x-2">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/1200px-FC_Barcelona_%28crest%29.svg.png" alt="Barcelona" class="w-8 h-8">
+                        <span>Barcelona</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Meme Creator -->
+        <div class="bg-white bg-opacity-30 rounded-xl p-6 mb-8 backdrop-blur-sm">
+            <h2 class="text-2xl font-bold text-white mb-4">Crea tu meme</h2>
+            <div class="grid gap-6">
+                <div>
+                    <div class="mb-4">
+                        <label class="block text-white mb-2">Sube una imagen o ingresa una URL</label>
+                        <input type="file" id="meme-upload" class="hidden" accept="image/*">
+                        <div class="flex space-x-2">
+                            <button onclick="document.getElementById('meme-upload').click()" class="bg-blue-400 hover:bg-blue-500 text-white px-4 py-2 rounded flex items-center space-x-1">
+                                <i class="fas fa-upload"></i>
+                                <span>Subir imagen</span>
+                            </button>
+                            <input type="text" id="meme-url" placeholder="Pega URL de imagen" class="flex-1 px-4 py-2 rounded border border-gray-300">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white mb-2">Texto superior</label>
+                        <input type="text" id="top-text" placeholder="Texto arriba" class="w-full px-4 py-2 rounded border border-gray-300">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-white mb-2">Texto inferior</label>
+                        <input type="text" id="bottom-text" placeholder="Texto abajo" class="w-full px-4 py-2 rounded border border-gray-300">
+                    </div>
+                    <button id="generate-btn" class="bg-red-400 hover:bg-red-500 text-white px-6 py-2 rounded-full font-bold transition">
+                        Generar Meme
+                    </button>
+                </div>
+                <div id="meme-preview-container" class="hidden">
+                    <div class="bg-white p-4 rounded-lg flex items-center justify-center">
+                        <div id="meme-preview" class="relative w-full max-w-md">
+                            <img id="meme-image" src="" class="w-full rounded">
+                            <div id="top-text-preview" class="absolute top-2 left-0 right-0 text-center text-white font-bold text-2xl uppercase stroke-black" style="text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;"></div>
+                            <div id="bottom-text-preview" class="absolute bottom-2 left-0 right-0 text-center text-white font-bold text-2xl uppercase stroke-black" style="text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meme Sharing -->
+        <div id="share-section" class="bg-white bg-opacity-30 rounded-xl p-6 mb-8 backdrop-blur-sm hidden">
+            <h2 class="text-2xl font-bold text-white mb-4">Comparte tu meme</h2>
+            <div class="flex flex-wrap gap-4">
+                <button id="whatsapp-share" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-full flex items-center space-x-2">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>Compartir en WhatsApp</span>
+                </button>
+                <button id="copy-link" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full flex items-center space-x-2">
+                    <i class="fas fa-link"></i>
+                    <span>Copiar enlace</span>
+                </button>
+                <button id="download-meme" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-full flex items-center space-x-2">
+                    <i class="fas fa-download"></i>
+                    <span>Descargar imagen</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- User Memes Gallery -->
+        <div id="user-memes" class="mb-12">
+            <h2 class="text-2xl font-bold text-white mb-6">Tus memes creados</h2>
+            <div id="user-memes-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Los memes creados por el usuario aparecerán aquí -->
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="bg-white bg-opacity-30 rounded-xl p-6 backdrop-blur-sm">
+            <h2 class="text-2xl font-bold text-white mb-4">Opiniones</h2>
+            <div class="mb-6">
+                <textarea id="comment-input" class="w-full px-4 py-2 rounded border border-gray-300 mb-2" placeholder="Escribe tu opinión..."></textarea>
+                <button id="submit-comment" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                    Enviar opinión
+                </button>
+            </div>
+            <div id="comments-container">
+                <!-- Sample Comment 1 -->
+                <div class="bg-white bg-opacity-70 p-4 rounded-lg mb-3">
+                    <div class="font-bold text-blue-600">Usuario123</div>
+                    <div class="text-gray-800">¡Esta página es genial! Los memes son muy divertidos.</div>
+                    <div class="text-xs text-gray-500 mt-1">Hace 2 días</div>
+                </div>
+                
+                <!-- Sample Comment 2 -->
+                <div class="bg-white bg-opacity-70 p-4 rounded-lg mb-3">
+                    <div class="font-bold text-blue-600">FanFutbol</div>
+                    <div class="text-gray-800">Me encanta poder crear mis propios memes de mi equipo favorito.</div>
+                    <div class="text-xs text-gray-500 mt-1">Hace 1 semana</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white bg-opacity-20 py-6 mt-8">
+        <div class="container mx-auto px-4 text-center text-white">
+            <p>© 2023 Memeaquí - Todos los memes son públicos y pueden ser usados libremente</p>
+            <div class="flex justify-center mt-4 space-x-4">
+                <a href="#" class="hover:text-blue-300"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-blue-400"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-pink-500"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-green-500"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Team selection
+        const madridBtn = document.getElementById('madrid-btn');
+        const barcaBtn = document.getElementById('barca-btn');
+        const userMemesContainer = document.getElementById('user-memes-container');
+
+        madridBtn.addEventListener('click', () => {
+            madridBtn.classList.add('team-selected');
+            barcaBtn.classList.remove('team-selected');
+        });
+
+        barcaBtn.addEventListener('click', () => {
+            barcaBtn.classList.add('team-selected');
+            madridBtn.classList.remove('team-selected');
+        });
+
+        // Meme generator
+        const memeUpload = document.getElementById('meme-upload');
+        const memeUrl = document.getElementById('meme-url');
+        const topText = document.getElementById('top-text');
+        const bottomText = document.getElementById('bottom-text');
+        const generateBtn = document.getElementById('generate-btn');
+        const memeImage = document.getElementById('meme-image');
+        const topTextPreview = document.getElementById('top-text-preview');
+        const bottomTextPreview = document.getElementById('bottom-text-preview');
+        const shareSection = document.getElementById('share-section');
+        const memePreviewContainer = document.getElementById('meme-preview-container');
+
+        memeUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    memeImage.src = event.target.result;
+                    memePreviewContainer.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+                memeUrl.value = '';
+            }
+        });
+
+        memeUrl.addEventListener('input', function() {
+            if (memeUrl.value) {
+                memeImage.src = memeUrl.value;
+                memeUpload.value = '';
+                memePreviewContainer.classList.remove('hidden');
+            }
+        });
+
+        topText.addEventListener('input', function() {
+            topTextPreview.textContent = topText.value;
+        });
+
+        bottomText.addEventListener('input', function() {
+            bottomTextPreview.textContent = bottomText.value;
+        });
+
+        generateBtn.addEventListener('click', function() {
+            if (!memeImage.src || memeImage.src === window.location.href) {
+                alert('Por favor sube una imagen o ingresa una URL');
+                return;
+            }
+            
+            // Create a new meme card
+            const memeCard = document.createElement('div');
+            memeCard.className = 'meme-card bg-white rounded-xl overflow-hidden shadow-lg transition';
+            
+            // Get the selected team
+            const selectedTeam = madridBtn.classList.contains('team-selected') ? 'madrid' : 'barca';
+            const teamLogo = selectedTeam === 'madrid' ? 
+                'https://upload.wikimedia.org/wikipedia/en/thumb/5/56/Real_Madrid_CF.svg/1200px-Real_Madrid_CF.svg.png' : 
+                'https://upload.wikimedia.org/wikipedia/en/thumb/4/47/FC_Barcelona_%28crest%29.svg/1200px-FC_Barcelona_%28crest%29.svg.png';
+            
+            // Create the meme HTML
+            memeCard.innerHTML = `
+                <div class="relative">
+                    <img src="${memeImage.src}" alt="Meme creado" class="w-full h-48 object-cover">
+                    <div class="absolute top-2 left-0 right-0 text-center text-white font-bold text-xl uppercase" style="text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;">${topText.value}</div>
+                    <div class="absolute bottom-2 left-0 right-0 text-center text-white font-bold text-xl uppercase" style="text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;">${bottomText.value}</div>
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center space-x-2">
+                            <img src="${teamLogo}" alt="${selectedTeam === 'madrid' ? 'Real Madrid' : 'Barcelona'}" class="w-6 h-6">
+                            <span class="text-sm font-medium">${selectedTeam === 'madrid' ? 'Real Madrid' : 'Barcelona'}</span>
+                        </div>
+                        <div class="flex space-x-1 rating-stars">
+                            <i class="far fa-star" data-rating="1"></i>
+                            <i class="far fa-star" data-rating="2"></i>
+                            <i class="far fa-star" data-rating="3"></i>
+                            <i class="far fa-star" data-rating="4"></i>
+                            <i class="far fa-star" data-rating="5"></i>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <button class="like-btn text-red-500">
+                            <i class="far fa-heart"></i> <span class="like-count">0</span>
+                        </button>
+                        <button class="whatsapp-share-btn bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-full text-sm flex items-center space-x-1">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Compartir</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add the new meme to the container
+            userMemesContainer.prepend(memeCard);
+            
+            // Initialize event listeners for the new meme
+            initMemeCardEvents(memeCard);
+            
+            // Show share section
+            shareSection.classList.remove('hidden');
+            window.scrollTo({
+                top: shareSection.offsetTop - 20,
+                behavior: 'smooth'
+            });
+            
+            // Reset form
+            memeUpload.value = '';
+            memeUrl.value = '';
+            topText.value = '';
+            bottomText.value = '';
+            topTextPreview.textContent = '';
+            bottomTextPreview.textContent = '';
+            memePreviewContainer.classList.add('hidden');
+        });
+
+        // Initialize events for meme cards
+        function initMemeCardEvents(card) {
+            // Rating stars
+            card.querySelectorAll('.rating-stars i').forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    const stars = this.parentElement.querySelectorAll('i');
+                    
+                    stars.forEach((s, index) => {
+                        if (index < rating) {
+                            s.classList.add('fas');
+                            s.classList.remove('far');
+                        } else {
+                            s.classList.add('far');
+                            s.classList.remove('fas');
+                        }
+                    });
+                    
+                    alert(`Gracias por tu valoración de ${rating} estrellas!`);
+                });
+            });
+
+            // Like buttons
+            card.querySelector('.like-btn').addEventListener('click', function() {
+                const heartIcon = this.querySelector('i');
+                const likeCount = this.querySelector('.like-count');
+                
+                if (heartIcon.classList.contains('far')) {
+                    heartIcon.classList.remove('far');
+                    heartIcon.classList.add('fas');
+                    likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                } else {
+                    heartIcon.classList.remove('fas');
+                    heartIcon.classList.add('far');
+                    likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                }
+            });
+
+            // WhatsApp share
+            card.querySelector('.whatsapp-share-btn').addEventListener('click', function() {
+                const memeCard = this.closest('.meme-card');
+                const memeImg = memeCard.querySelector('img').src;
+                const topText = memeCard.querySelector('div:first-child > div:first-child').textContent;
+                const bottomText = memeCard.querySelector('div:first-child > div:last-child').textContent;
+                
+                const text = `Mira este meme que creé en Memeaquí:\n\n"${topText}"\n"${bottomText}"\n\n${memeImg}`;
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(whatsappUrl, '_blank');
+            });
+        }
+
+        // Share buttons
+        document.getElementById('whatsapp-share').addEventListener('click', function() {
+            const text = `Mira el meme que creé en Memeaquí:\n\n"${topTextPreview.textContent}"\n"${bottomTextPreview.textContent}"\n\n${memeImage.src}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(whatsappUrl, '_blank');
+        });
+
+        document.getElementById('copy-link').addEventListener('click', function() {
+            navigator.clipboard.writeText(memeImage.src)
+                .then(() => alert('Enlace copiado al portapapeles'))
+                .catch(err => console.error('Error al copiar: ', err));
+        });
+
+        document.getElementById('download-meme').addEventListener('click', function() {
+            const link = document.createElement('a');
+            link.href = memeImage.src;
+            link.download = 'meme-aqui-' + Date.now() + '.jpg';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Comments
+        const commentInput = document.getElementById('comment-input');
+        const submitComment = document.getElementById('submit-comment');
+        const commentsContainer = document.getElementById('comments-container');
+
+        submitComment.addEventListener('click', function() {
+            if (commentInput.value.trim() === '') {
+                alert('Por favor escribe un comentario');
+                return;
+            }
+            
+            const commentDiv = document.createElement('div');
+            commentDiv.className = 'bg-white bg-opacity-70 p-4 rounded-lg mb-3';
+            
+            const username = 'Usuario' + Math.floor(Math.random() * 1000);
+            const now = new Date();
+            const timeAgo = 'Hace unos momentos';
+            
+            commentDiv.innerHTML = `
+                <div class="font-bold text-blue-600">${username}</div>
+                <div class="text-gray-800">${commentInput.value}</div>
+                <div class="text-xs text-gray-500 mt-1">${timeAgo}</div>
+            `;
+            
+            commentsContainer.prepend(commentDiv);
+            commentInput.value = '';
+            
+            alert('Gracias por tu comentario!');
+        });
+    </script>
+</body>
+</html>
