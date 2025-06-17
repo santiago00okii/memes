@@ -3,300 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ruleta Épica de Fútbol</title>
+    <title>Generador de Noticias de Fichajes - Donsrumán</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .gradient-bg {
+            background: linear-gradient(135deg, #ff0033 0%, #000000 100%);
         }
-        .spin-animation {
-            animation: spin 0.5s linear infinite;
+        .news-card {
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
         }
-        .fade-in {
-            animation: fadeIn 1s ease-in;
+        .news-card:hover {
+            transform: translateY(-5px);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .pulse {
+            animation: pulse 1.5s infinite;
         }
-        .bg-gradient-football {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 50%, #1e3a8a 100%);
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen font-sans">
-    <div class="container mx-auto px-4 py-8">
-        <div class="max-w-3xl mx-auto">
-            <!-- Header -->
-            <header class="text-center mb-10">
-                <h1 class="text-4xl md:text-5xl font-bold text-blue-900 mb-2">⚽ Ruleta Épica de Fútbol</h1>
-                <p class="text-lg text-gray-600">Donde el destino decide los duelos más legendarios</p>
-            </header>
-
-            <!-- League Selection -->
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-blue-800 mb-4">Selecciona una liga</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button onclick="selectLeague('Premier League')" class="league-btn bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-medium transition-all">
-                        <i class="fas fa-trophy mr-2"></i> Premier
-                    </button>
-                    <button onclick="selectLeague('LaLiga')" class="league-btn bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium transition-all">
-                        <i class="fas fa-futbol mr-2"></i> LaLiga
-                    </button>
-                    <button onclick="selectLeague('Serie A')" class="league-btn bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-all">
-                        <i class="fas fa-flag mr-2"></i> Serie A
-                    </button>
-                    <button onclick="selectLeague('Bundesliga')" class="league-btn bg-yellow-600 hover:bg-yellow-700 text-white py-3 px-4 rounded-lg font-medium transition-all">
-                        <i class="fas fa-star mr-2"></i> Bundesliga
-                    </button>
+<body class="bg-gray-100 font-sans">
+    <header class="gradient-bg text-white py-6">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-futbol text-3xl mr-3"></i>
+                    <h1 class="text-3xl font-bold">Donsrumán Transfer News</h1>
                 </div>
-                <div class="mt-4">
-                    <input type="text" id="customLeague" placeholder="O escribe tu propia liga" class="w-full p-3 border border-gray-300 rounded-lg">
-                    <button onclick="selectCustomLeague()" class="mt-2 w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-all">
-                        <i class="fas fa-plus-circle mr-2"></i> Usar esta liga
-                    </button>
+                <div class="flex items-center">
+                    <span class="bg-white text-red-600 px-3 py-1 rounded-full font-bold text-sm">EN VIVO</span>
+                    <span class="ml-3 text-sm">Última actualización: <span id="current-time"></span></span>
                 </div>
-            </div>
-
-            <!-- Selected League Display -->
-            <div id="selectedLeagueContainer" class="hidden bg-gradient-football text-white rounded-xl shadow-lg p-6 mb-8 text-center">
-                <h2 class="text-2xl font-bold mb-2">Liga seleccionada:</h2>
-                <p id="selectedLeague" class="text-3xl font-extrabold"></p>
-            </div>
-
-            <!-- Roulette Section -->
-            <div id="rouletteSection" class="hidden bg-white rounded-xl shadow-lg p-6 mb-8 text-center">
-                <h2 class="text-2xl font-bold text-blue-800 mb-6">¡Haz girar la ruleta!</h2>
-                <div class="flex justify-center mb-8">
-                    <div id="roulette" class="w-64 h-64 bg-blue-100 rounded-full border-8 border-blue-300 flex items-center justify-center cursor-pointer hover:bg-blue-200 transition-all">
-                        <div id="rouletteIcon" class="text-5xl text-blue-700">
-                            <i class="fas fa-futbol"></i>
-                        </div>
-                    </div>
-                </div>
-                <button id="spinBtn" onclick="spinRoulette()" class="bg-blue-600 hover:bg-blue-700 text-white py-3 px-8 rounded-lg font-bold text-lg transition-all">
-                    <i class="fas fa-play mr-2"></i> Girar Ruleta
-                </button>
-            </div>
-
-            <!-- Match Preview -->
-            <div id="matchPreview" class="hidden bg-gradient-football text-white rounded-xl shadow-lg p-6 mb-8 fade-in">
-                <div class="text-center mb-6">
-                    <p id="matchAnnouncement" class="text-xl font-bold mb-2">⚽ ¡La ruleta giró... y el destino habló!</p>
-                    <div id="leagueTeams" class="text-2xl font-extrabold mb-4"></div>
-                </div>
-                
-                <div id="matchContext" class="bg-white bg-opacity-10 p-4 rounded-lg mb-4">
-                    <p id="matchNarration" class="text-lg italic"></p>
-                </div>
-                
-                <div id="matchChallenge" class="bg-yellow-500 bg-opacity-20 p-4 rounded-lg mb-4">
-                    <p class="font-bold text-lg">🔥 RETO:</p>
-                    <p id="challengeText"></p>
-                </div>
-                
-                <div id="matchClosing" class="text-right">
-                    <p id="closingText" class="text-lg font-bold italic"></p>
-                </div>
-            </div>
-
-            <!-- Share Button -->
-            <div id="shareSection" class="hidden text-center">
-                <button onclick="shareMatch()" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-lg font-medium transition-all">
-                    <i class="fas fa-share-alt mr-2"></i> Compartir este duelo
-                </button>
             </div>
         </div>
-    </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg shadow-lg news-card overflow-hidden mb-8">
+                <div class="gradient-bg text-white py-3 px-6">
+                    <h2 class="text-xl font-bold">Generador de Noticias de Fichajes</h2>
+                </div>
+                <div class="p-6">
+                    <form id="transfer-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="player-name">Nombre del jugador</label>
+                                <input type="text" id="player-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="previous-team">Equipo anterior</label>
+                                <input type="text" id="previous-team" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="current-team">Equipo actual</label>
+                                <input type="text" id="current-team" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="position">Posición</label>
+                                <select id="position" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    <option value="DC">Delantero Centro (DC)</option>
+                                    <option value="SD">Segundo Delantero (SD)</option>
+                                    <option value="EI">Extremo Izquierdo (EI)</option>
+                                    <option value="ED">Extremo Derecho (ED)</option>
+                                    <option value="MCO">Medio Centro Ofensivo (MCO)</option>
+                                    <option value="MC">Medio Centro (MC)</option>
+                                    <option value="MCD">Medio Centro Defensivo (MCD)</option>
+                                    <option value="LI">Lateral Izquierdo (LI)</option>
+                                    <option value="LD">Lateral Derecho (LD)</option>
+                                    <option value="DFC">Defensa Central (DFC)</option>
+                                    <option value="POR">Portero (POR)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="age">Edad</label>
+                                <input type="number" id="age" min="16" max="40" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="rating">Nivel General (GRL)</label>
+                                <input type="number" id="rating" min="50" max="99" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" required>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2" for="transfer-fee">Monto del fichaje (millones €)</label>
+                                <input type="text" id="transfer-fee" placeholder="Opcional" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2" for="headline-style">Estilo del titular</label>
+                            <select id="headline-style" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                                <option value="impact">Impactante ("¡BOMBAZO DE MERCADO!")</option>
+                                <option value="formal">Formal ("Club anuncia fichaje de...")</option>
+                                <option value="surprise">Sorpresa ("Fichaje inesperado para...")</option>
+                                <option value="future">Apuesta al futuro ("La joya que llega a...")</option>
+                            </select>
+                        </div>
+                        
+                        <div class="pt-4">
+                            <button type="submit" class="gradient-bg text-white px-6 py-3 rounded-lg font-bold hover:opacity-90 transition duration-300 flex items-center justify-center w-full">
+                                <i class="fas fa-newspaper mr-2"></i> Generar Noticia
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="news-result" class="hidden bg-white rounded-lg shadow-lg news-card overflow-hidden">
+                <div class="gradient-bg text-white py-4 px-6 flex justify-between items-center">
+                    <h2 class="text-xl font-bold">Noticia Generada</h2>
+                    <button id="copy-btn" class="bg-white text-red-600 px-3 py-1 rounded-full font-bold text-sm flex items-center">
+                        <i class="fas fa-copy mr-1"></i> Copiar
+                    </button>
+                </div>
+                <div class="p-6">
+                    <div id="news-content" class="space-y-4">
+                        <!-- News content will be inserted here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <footer class="bg-black text-white py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p class="mb-2">© 2023 Donsrumán Transfer News - Todos los derechos reservados</p>
+            <div class="flex justify-center space-x-4">
+                <a href="#" class="hover:text-red-500"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-red-500"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="hover:text-red-500"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-red-500"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        let selectedLeague = '';
-        const leaguesTeams = {
-            'Premier League': ['Arsenal', 'Chelsea', 'Manchester United', 'Manchester City', 'Liverpool', 'Tottenham', 'Newcastle', 'Aston Villa', 'West Ham', 'Everton'],
-            'LaLiga': ['Real Madrid', 'Barcelona', 'Atlético de Madrid', 'Sevilla', 'Valencia', 'Villarreal', 'Real Sociedad', 'Athletic Bilbao', 'Betis', 'Celta'],
-            'Serie A': ['Juventus', 'AC Milan', 'Inter', 'Roma', 'Napoli', 'Lazio', 'Atalanta', 'Fiorentina', 'Torino', 'Bologna'],
-            'Bundesliga': ['Bayern Munich', 'Borussia Dortmund', 'RB Leipzig', 'Bayer Leverkusen', 'Wolfsburg', 'Eintracht Frankfurt', 'Borussia Mönchengladbach', 'Hoffenheim', 'Stuttgart', 'Werder Bremen']
-        };
-
-        const challenges = [
-            "Solo valen goles con zurda. El que pierde tiene que narrar el próximo partido con voz de relator argentino.",
-            "Prohibido marcar antes del minuto 30. Si lo haces, deberás donar 10€ a una fundación del rival.",
-            "Goles de cabeza valen doble. El perdedor deberá cambiar su foto de perfil por el escudo del rival por una semana.",
-            "El arquero debe hacer al menos 3 asistencias. Si no lo logra, deberá publicar un video cantando el himno del equipo contrario.",
-            "Prohibido hacer cambios. El DT que incumpla deberá twittear 'El otro equipo es mejor que el mío' con banderas del rival.",
-            "Solo se puede marcar desde fuera del área. El que pierde debe subir una foto de niño con la camiseta del rival.",
-            "El primer tiro al arco decide todo. Si no es gol, el equipo debe jugar el resto del partido con un hombre menos."
-        ];
-
-        const contexts = {
-            'Premier League': [
-                "Un clásico que huele a pólvora y cerveza tibia. Tradición contra modernidad, Brexit contra fútbol champagne. Hoy no hay medias tintas.",
-                "El norte industrial contra el sur aristocrático. Estos equipos llevan décadas escribiendo una rivalidad que hoy llega a su capítulo más candente.",
-                "Más que un partido, es una batalla cultural. Un estilo contra otro, una filosofía contra su antítesis. El estadio está que hierve."
-            ],
-            'LaLiga': [
-                "Un duelo con sabor a paella y jamón ibérico. La pasión mediterránea contra la garra castellana. Hoy se juegan más que tres puntos.",
-                "El orgullo de una región contra el poderío de la capital. Estos equipos llevan años midiéndose en duelos que quedan para la historia.",
-                "Fútbol de toque contra contraataque letal. Dos formas de entender el juego que chocan en un partido que promete fuego."
-            ],
-            'Serie A': [
-                "Un derbi con aroma a espresso y pasta al dente. La elegancia contra la determinación, la táctica italiana en su máxima expresión.",
-                "Norte contra sur, industria contra tradición. Estos equipos representan más que ciudades, son formas de vida que hoy se enfrentan.",
-                "Un duelo táctico que promete ser una obra de arte. El catenaccio contra el fútbol alegre, el resultado es impredecible."
-            ],
-            'Bundesliga': [
-                "Un partido que huele a cerveza y bratwurst. La eficiencia alemana contra el fútbol total, dos filosofías que hoy chocan.",
-                "El poderío bávaro contra la resistencia renana. Estos equipos escriben otro capítulo de una rivalidad llena de goles y emociones.",
-                "Fútbol de alta presión contra contraataques eléctricos. El estadio está al rojo vivo y los aficionados no dan abasto con la emoción."
-            ]
-        };
-
-        const closings = [
-            "Que ruede el balón... porque hoy, solo uno saldrá con el joystick en alto.",
-            "Los dioses del fútbol están mirando... ¿quién se ganará su favor esta noche?",
-            "El estadio es un polvorín... que empiece el espectáculo.",
-            "Silbato inicial, corazón a mil... que comience la batalla.",
-            "Más que un partido, una leyenda en construcción. ¡A jugar!"
-        ];
-
-        function selectLeague(league) {
-            selectedLeague = league;
-            document.getElementById('selectedLeague').textContent = league;
-            document.getElementById('selectedLeagueContainer').classList.remove('hidden');
-            document.getElementById('rouletteSection').classList.remove('hidden');
-            document.getElementById('matchPreview').classList.add('hidden');
-            document.getElementById('shareSection').classList.add('hidden');
-            
-            // Scroll to roulette section
-            document.getElementById('rouletteSection').scrollIntoView({ behavior: 'smooth' });
+        // Update current time
+        function updateTime() {
+            const now = new Date();
+            const options = { hour: '2-digit', minute: '2-digit', hour12: true };
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('es-ES', options);
         }
+        setInterval(updateTime, 1000);
+        updateTime();
 
-        function selectCustomLeague() {
-            const customLeague = document.getElementById('customLeague').value.trim();
-            if (customLeague) {
-                selectedLeague = customLeague;
-                document.getElementById('selectedLeague').textContent = customLeague;
-                document.getElementById('selectedLeagueContainer').classList.remove('hidden');
-                document.getElementById('rouletteSection').classList.remove('hidden');
-                document.getElementById('matchPreview').classList.add('hidden');
-                document.getElementById('shareSection').classList.add('hidden');
-                
-                // Add custom league to leaguesTeams with some generic teams
-                if (!leaguesTeams[customLeague]) {
-                    leaguesTeams[customLeague] = ['Equipo A', 'Equipo B', 'Equipo C', 'Equipo D', 'Equipo E', 'Equipo F'];
-                }
-                
-                // Scroll to roulette section
-                document.getElementById('rouletteSection').scrollIntoView({ behavior: 'smooth' });
+        // Form submission
+        document.getElementById('transfer-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const playerName = document.getElementById('player-name').value;
+            const previousTeam = document.getElementById('previous-team').value;
+            const currentTeam = document.getElementById('current-team').value;
+            const position = document.getElementById('position').value;
+            const age = document.getElementById('age').value;
+            const rating = document.getElementById('rating').value;
+            const transferFee = document.getElementById('transfer-fee').value;
+            const headlineStyle = document.getElementById('headline-style').value;
+            
+            // Generate headline based on style
+            let headline = '';
+            const teamColors = {
+                'River Plate': '🔴',
+                'Boca Juniors': '🔵',
+                'Real Madrid': '⚪',
+                'Barcelona': '🔵🔴',
+                'Manchester United': '🔴',
+                'Manchester City': '🔵',
+                'Bayern Munich': '🔴',
+                'PSG': '🔵🔴',
+                'Juventus': '⚫⚪',
+                'default': '⚽'
+            };
+            
+            const teamEmoji = teamColors[currentTeam] || teamColors['default'];
+            
+            switch(headlineStyle) {
+                case 'impact':
+                    headline = `${teamEmoji} ¡BOMBAZO DE MERCADO! ${currentTeam.toUpperCase()} FICHA A ${playerName.toUpperCase()}`;
+                    break;
+                case 'formal':
+                    headline = `${teamEmoji} ${currentTeam} anuncia el fichaje de ${playerName}`;
+                    break;
+                case 'surprise':
+                    headline = `${teamEmoji} FICHAJE INESPERADO: ${playerName.toUpperCase()} LLEGA A ${currentTeam.toUpperCase()}`;
+                    break;
+                case 'future':
+                    headline = `${teamEmoji} ${currentTeam.toUpperCase()} APUESTA AL FUTURO: ${playerName.toUpperCase()} ES NUEVO REFUERZO`;
+                    break;
+                default:
+                    headline = `${teamEmoji} ${currentTeam.toUpperCase()} FICHA A ${playerName.toUpperCase()}`;
+            }
+            
+            // Generate news content
+            let newsContent = `
+                <p class="text-2xl font-bold text-red-600">${headline}</p>
+                <p>El ${getPositionName(position)} ${playerName} (GRL ${rating}, ${age} años) se convirtió en nuevo jugador de ${currentTeam} tras su salida de ${previousTeam}.`;
+            
+            if (transferFee) {
+                newsContent += ` Según fuentes cercanas al club, el traspaso se cerró por ${transferFee} millones de euros.`;
             } else {
-                alert('Por favor escribe el nombre de una liga');
-            }
-        }
-
-        function spinRoulette() {
-            const roulette = document.getElementById('rouletteIcon');
-            const spinBtn = document.getElementById('spinBtn');
-            
-            // Disable button during spin
-            spinBtn.disabled = true;
-            spinBtn.classList.add('opacity-50');
-            roulette.classList.add('spin-animation');
-            
-            // Hide previous match preview if exists
-            document.getElementById('matchPreview').classList.add('hidden');
-            
-            // Simulate spinning for 2 seconds
-            setTimeout(() => {
-                roulette.classList.remove('spin-animation');
-                generateMatch();
-                spinBtn.disabled = false;
-                spinBtn.classList.remove('opacity-50');
-            }, 2000);
-        }
-
-        function generateMatch() {
-            if (!selectedLeague) return;
-            
-            // Get random teams (make sure they're different)
-            const teams = leaguesTeams[selectedLeague] || ['Equipo 1', 'Equipo 2', 'Equipo 3', 'Equipo 4'];
-            let team1 = teams[Math.floor(Math.random() * teams.length)];
-            let team2 = teams[Math.floor(Math.random() * teams.length)];
-            
-            while (team2 === team1) {
-                team2 = teams[Math.floor(Math.random() * teams.length)];
+                newsContent += ` El jugador llegó como agente libre tras finalizar su contrato con su anterior club.`;
             }
             
-            // Set teams display
-            document.getElementById('leagueTeams').innerHTML = `
-                <span class="text-blue-200">${selectedLeague}</span> – 
-                <span class="text-yellow-300">${team1}</span> 🆚 
-                <span class="text-red-300">${team2}</span>
-            `;
+            newsContent += `</p>`;
             
-            // Get random context based on league or use generic one
-            let context = "";
-            if (contexts[selectedLeague]) {
-                context = contexts[selectedLeague][Math.floor(Math.random() * contexts[selectedLeague].length)];
+            // Generate quote
+            const quotes = [
+                `"Estamos muy contentos con la llegada de ${playerName}. Es un jugador con las características que buscábamos y creemos que se adaptará rápidamente al equipo", declaró el director deportivo.`,
+                `"${playerName} es un jugador con mucho potencial y estamos seguros que dará mucho que hablar en nuestro club", afirmó el entrenador en conferencia de prensa.`,
+                `"Es un honor llegar a un club tan grande como ${currentTeam}. Voy a dar lo mejor de mí para ayudar al equipo a alcanzar sus objetivos", fueron las primeras palabras del jugador.`,
+                `"Hemos trabajado mucho para cerrar este fichaje. ${playerName} es un jugador que encaja perfectamente en nuestro proyecto deportivo", comentó el presidente del club.`
+            ];
+            
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            newsContent += `<p class="italic bg-gray-100 p-4 border-l-4 border-red-500">${randomQuote}</p>`;
+            
+            // Generate analysis
+            let analysis = '';
+            if (position === 'DC' || position === 'SD') {
+                analysis = `${playerName} se perfila como la nueva referencia ofensiva de ${currentTeam} y podría formar parte de la delantera titular desde el primer partido.`;
+            } else if (position === 'MCO' || position === 'MC') {
+                analysis = `El mediocampista llegará para darle creatividad y dinámica al centro del campo de ${currentTeam}, donde podría asociarse con jugadores como [nombre de compañero].`;
+            } else if (position === 'DFC') {
+                analysis = `Con su llegada, ${currentTeam} busca solucionar sus problemas defensivos. ${playerName} podría formar la pareja central con [nombre de compañero] desde el próximo partido.`;
             } else {
-                context = "Un duelo que promete quedarse en la memoria. Dos estilos que chocan, dos filosofías que se enfrentan. El estadio está que hierve y los aficionados no dan abasto con la emoción.";
+                analysis = `Su incorporación fortalece el ${getPositionName(position)} de ${currentTeam}, donde tendrá que competir por un puesto con [nombre de compañero]. Los aficionados esperan con ansias su debut.`;
             }
             
-            // Replace team placeholders in context if they exist
-            context = context.replace("estos equipos", `${team1} y ${team2}`);
+            newsContent += `<p>${analysis}</p>`;
             
-            document.getElementById('matchNarration').textContent = context;
-            
-            // Get random challenge
-            const challenge = challenges[Math.floor(Math.random() * challenges.length)];
-            document.getElementById('challengeText').textContent = challenge;
-            
-            // Get random closing
-            const closing = closings[Math.floor(Math.random() * closings.length)];
-            document.getElementById('closingText').textContent = closing;
-            
-            // Show match preview and share button
-            document.getElementById('matchPreview').classList.remove('hidden');
-            document.getElementById('shareSection').classList.remove('hidden');
-            
-            // Scroll to match preview
-            setTimeout(() => {
-                document.getElementById('matchPreview').scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-        }
-
-        function shareMatch() {
-            if (!navigator.share) {
-                alert('Tu navegador no soporta la API de compartir. Copia manualmente el texto.');
-                return;
-            }
-            
-            const leagueTeams = document.getElementById('leagueTeams').textContent;
-            const matchNarration = document.getElementById('matchNarration').textContent;
-            const challengeText = document.getElementById('challengeText').textContent;
-            const closingText = document.getElementById('closingText').textContent;
-            
-            const shareText = `⚽ ¡La ruleta giró... y el destino habló!\n\n${leagueTeams}\n\n${matchNarration}\n\n🔥 RETO: ${challengeText}\n\n${closingText}\n\nGenerado con Ruleta Épica de Fútbol`;
-            
-            navigator.share({
-                title: 'Duelo Épico de Fútbol',
-                text: shareText,
-                url: window.location.href
-            }).catch(err => {
-                console.log('Error al compartir:', err);
-            });
-        }
-
-        // Add click effect to league buttons
-        document.querySelectorAll('.league-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                this.classList.add('transform', 'scale-95');
+            // Display result
+            document.getElementById('news-content').innerHTML = newsContent;
+            document.getElementById('news-result').classList.remove('hidden');
+            document.getElementById('news-result').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        // Copy button functionality
+        document.getElementById('copy-btn').addEventListener('click', function() {
+            const newsText = document.getElementById('news-content').innerText;
+            navigator.clipboard.writeText(newsText).then(() => {
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-check mr-1"></i> Copiado!';
                 setTimeout(() => {
-                    this.classList.remove('transform', 'scale-95');
-                }, 150);
+                    this.innerHTML = originalText;
+                }, 2000);
             });
         });
+        
+        // Helper function to get full position name
+        function getPositionName(abbreviation) {
+            const positions = {
+                'DC': 'delantero centro',
+                'SD': 'segundo delantero',
+                'EI': 'extremo izquierdo',
+                'ED': 'extremo derecho',
+                'MCO': 'medio centro ofensivo',
+                'MC': 'medio centro',
+                'MCD': 'medio centro defensivo',
+                'LI': 'lateral izquierdo',
+                'LD': 'lateral derecho',
+                'DFC': 'defensa central',
+                'POR': 'portero'
+            };
+            return positions[abbreviation] || abbreviation;
+        }
     </script>
 </body>
 </html>
